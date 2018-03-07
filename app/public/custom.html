@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Banner Genius</title>
+
+  <!-- Latest compiled and minified CSS & JS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery.js"></script>
+  <link rel="stylesheet" href="https://bootswatch.com/4/united/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+
+  <!-- Font Awesome Glyphicons -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+
+  <!-- Chosen -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.jquery.min.js"></script>
+  <link rel="stylesheet" src="/style.css">
+</head>
+
+<body>
+
+  <div class="container">
+    <br>
+    <h1 class="text-info text-center">CUSTOM BANNER</h1>
+    <hr>
+    <br>
+    <h3><strong>Product Information</strong></h3>
+    <h4>Product Name</h4>
+    <input type="text" id="item" class="form-control" required>
+    <h4>Brand Name</h4>
+    <input type="text" id="brandname" class="form-control" required>
+    <h4>Country</h4>
+    <input type="text" id="country" class="form-control" required>
+   <!--  <h4>Upload Background Photo</h4>
+    <input type="text" id="photo" class="form-control" required> -->
+
+    <hr>
+
+    <h3><strong>Selling Point<strong></h3>
+    <h4>What's the most desirable characteristic of your product?</h4>
+    <select class="chosen-select" id="q1">
+      <option value=""></option>
+      <option value="new">NEW - new arrivals</option>
+      <option value="popular">POPULAR - best-selling products</option>
+      <option value="style">STYLISH - trendy styles and designs</option>
+      <option value="seasonal">SEASONAL - winter, summer, fall, spring</option>
+      <option value="price">DISCOUNT - sale, final sale</option>
+      <option value="health">HEALTHY</option>
+      <option value="health">RELIABLE</option>
+    </select>
+    <br>
+    <br>
+    <h3><strong>Category</strong></h3>
+    <h4>What categoy is your product in?</h4>
+    <select class="chosen-select" id="q2">
+      <option value=""></option>
+      <option value="generic">Generic - choose this for more options</option>
+      <option value="electronics">Electronics</option>
+      <option value="fashion">Fashion</option>
+      <option value="automobile">Automobile</option>
+      <option value="home">Home and Living</option>
+    </select>
+
+    <br>
+    <br>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-info btn-lg btn-block" id="submit"><i class="fa fa-check-circle" aria-hidden="true"></i>
+     SUBMIT</button>
+
+    <br>
+
+    <div id="result" class="text-center">
+      <img id="image" class="hidden">
+      <p id="title"></p>
+    </div>
+    <div class="text-center"> 
+       <button class="btn btn-warning btn-lg hidden multilang" id="EN" style="width: 13%; height: auto; font-size: 155%;">EN</button>
+       <button class="btn btn-warning btn-lg hidden multilang" id="RU" style="width: 13%; height: auto; font-size: 155%;">RU</button>
+       <button class="btn btn-warning btn-lg hidden multilang" id="ES" style="width: 13%; height: auto; font-size: 155%;">ES</button>
+       <button class="btn btn-warning btn-lg hidden multilang" id="PT" style="width: 13%; height: auto; font-size: 155%;">PT</button>
+       <button class="btn btn-warning btn-lg hidden multilang" id="FR" style="width: 13%; height: auto; font-size: 155%;">FR</button>
+       <br><br>
+      <button class="btn btn-danger btn-lg hidden multilang" id="FR" style="width: 20%; height: auto; font-size: 155%;">EXPORT
+        <i class="fa fa-arrow-circle-right"></i></button>
+    </div>
+
+    <hr>
+    <footer class="footer fixed">
+      <div class="container">
+         <p><a href="/home">BANNER GENIUS HOME</a> | <a href="/api/friends">Documentation</a> | © 2018 Copyright Alibaba Group</p>
+      </div>
+    </footer>
+
+  </div>
+      
+
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    // Chosen CSS
+    var config = {
+      ".chosen-select": {},
+      ".chosen-select-deselect": {
+        allow_single_deselect: true
+      },
+      ".chosen-select-no-single": {
+        disable_search_threshold: 10
+      },
+      ".chosen-select-no-results": {
+        no_results_text: "Oops, nothing found!"
+      },
+      ".chosen-select-width": {
+        width: "95%"
+      }
+    };
+
+    for (var selector in config) {
+      $(selector).chosen(config[selector]);
+    }
+
+    // Capture the form inputs
+    $("#submit").on("click", function(event) {
+      event.preventDefault();
+
+      // Form validation
+      function validateForm() {
+        var isValid = true;
+        $(".form-control").each(function() {
+          if ($(this).val() === "") {
+            isValid = false;
+          }
+        });
+
+        $(".chosen-select").each(function() {
+
+          if ($(this).val() === "") {
+            isValid = false;
+          }
+        });
+        return isValid;
+      }
+
+      // If all required fields are filled
+      if (validateForm()) {
+          var item = $("#item").val();
+          var brandname = $("#brandname").val();
+          var country = $("#country").val();
+        // Create an object for the user"s data
+        var userData = {
+          // item: $("#item").val(),
+          // brandname: $("#brandname").val(),
+          // country: $("#country").val(),
+          sellingPt: $("#q1").val(),
+          category: $("#q2").val()
+        };
+
+        // AJAX post the data to the friends API.
+        $.post("/api/customize", userData, function(data) {
+
+          console.log(data);
+          var pick = data[Math.floor(Math.random() * data.length)];
+          console.log(pick);
+        
+          pick.en_us = pick.en_us.replace("{item}", item).replace("{country}", country).replace("{brandname}",brandname);
+          pick.es_es = pick.es_es.replace("{item}", item).replace("{country}", country).replace("{brandname}",brandname);
+          pick.ru_ru = pick.ru_ru.replace("{item}", item).replace("{country}", country).replace("{brandname}",brandname);
+          pick.pt_br = pick.pt_br.replace("{item}", item).replace("{country}", country).replace("{brandname}",brandname);
+          pick.fr_fr = pick.fr_fr.replace("{item}", item).replace("{country}", country).replace("{brandname}",brandname);
+          
+
+
+          $(".multilang").removeClass("hidden");
+          $("#title").text(pick.en_us);
+          $("#image").removeClass("hidden");
+          $("#image").attr("src", pick.url);
+          $("#submit").text("SHOW ANOTHER ONE");
+
+
+          $("#EN").on("click", function(){
+             $("#title").text(pick.en_us); 
+          });
+
+
+          $("#ES").on("click", function(){
+             $("#title").text(pick.es_es); 
+          });
+
+          $("#RU").on("click", function(){
+            $("#title").text(pick.ru_ru); 
+          });
+
+          $("#PT").on("click", function(){
+            $("#title").text(pick.pt_br); 
+          });
+
+
+          $("#FR").on("click", function(){
+            $("#title").text(pick.fr_fr); 
+          });
+
+        });
+      } else {
+        alert("Please fill out all fields before submitting!");
+      }
+    });
+  </script>
+
+   <style type="text/css">
+    #title{
+      text-align: center;
+      font-size: 23px;
+      position: relative;
+      top: -170px;      
+    }
+
+    #image {
+      width: 750px;
+      height: 300px;
+    }
+
+  </style>
+
+</body>
+
+</html>
